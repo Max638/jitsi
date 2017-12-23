@@ -442,8 +442,14 @@ public class PacketLoggingServiceImpl
         // if one of the addresses is ipv4 we are using ipv4,
         // local udp addresses come as 0.0.0.0.0....0.0.0 when
         // ipv6 is enabled in the underlying os
-        boolean isIPv4 = packet.sourceAddress.length == 4
-                || packet.destinationAddress.length == 4;
+        boolean isIPv4;
+        try 
+        {
+            isIPv4 = packet.sourceAddress.length == 4
+                    || packet.destinationAddress.length == 4;
+        }catch(NullPointerException exception) 
+        {   return;
+        }
 
         byte[] ipHeader;
 
