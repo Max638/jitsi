@@ -23,12 +23,16 @@ import net.java.sip.communicator.service.protocol.*;
 import net.java.sip.communicator.service.protocol.Message;
 import net.java.sip.communicator.service.protocol.event.*;
 import net.java.sip.communicator.util.*;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.*;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.Entry;
 
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.SmackException.*;
 import org.jivesoftware.smack.filter.*;
 import org.jivesoftware.smack.packet.*;
 import org.jivesoftware.smack.provider.*;
+
+import org.jivesoftware.smack.sm.packet.StreamManagement.*;
 import org.jivesoftware.smack.util.*;
 import org.jivesoftware.smackx.carbons.CarbonCopyReceivedListener;
 import org.jivesoftware.smackx.carbons.CarbonManager;
@@ -55,6 +59,7 @@ import static org.jivesoftware.smack.packet.XMPPError.Condition.*;
  * @author Alain Knaebel
  * @author Emil Ivov
  * @author Hristo Terezov
+ * @author Maksym Chmutov
  */
 public class OperationSetBasicInstantMessagingJabberImpl
     extends AbstractOperationSetBasicInstantMessaging
@@ -145,6 +150,17 @@ public class OperationSetBasicInstantMessagingJabberImpl
      * Whether carbon is enabled or not.
      */
     private boolean isCarbonEnabled = false;
+
+    /**
+     * Indicates the number of messages that have been sent.
+     */
+    private int counterOfSentMessages = 0;
+
+    /**
+     * Unacknowledged messages that have been sent.
+     */
+    private Queue<Entry> unacknowledgedMessages = new LinkedList<>();
+
 
     /**
      * Creates an instance of this operation set.
@@ -497,7 +513,12 @@ public class OperationSetBasicInstantMessagingJabberImpl
 
             try
             {
+                this.unacknowledgedMessages.add(new Entry(this.counterOfSentMessages, msg));
+                
                 jabberProvider.getConnection().sendStanza(msg);
+                
+                this.counterOfSentMessages++;
+                
             }
             catch (NotConnectedException | InterruptedException e)
             {
