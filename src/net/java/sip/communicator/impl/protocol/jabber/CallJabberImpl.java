@@ -44,6 +44,7 @@ import org.jxmpp.jid.Jid;
  * @author Emil Ivov
  * @author Lyubomir Marinov
  * @author Boris Grozev
+ * @author Maksym Chmutov
  */
 public class CallJabberImpl
     extends MediaAwareCall<

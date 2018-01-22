@@ -61,6 +61,7 @@ import static org.jivesoftware.smack.packet.XMPPError.Condition.*;
  * @author Valentin Martinet
  * @author Boris Grozev
  * @author Hristo Terezov
+ * @author Maksym Chmutov
  */
 public class ChatRoomJabberImpl
     extends AbstractChatRoom
