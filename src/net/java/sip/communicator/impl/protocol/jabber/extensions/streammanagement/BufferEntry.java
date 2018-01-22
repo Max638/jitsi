@@ -24,15 +24,15 @@ import org.jivesoftware.smack.packet.*;
  *
  * @author Maksym Chmutov
  */
-public class Entry
+public class BufferEntry
 {
     private int entryValue;
-    private Message message;
+    private Stanza stanza;
     
-    public Entry(int entryValue, Message message)
+    public BufferEntry(int entryValue, Stanza stanza)
     {
         this.entryValue = entryValue;
-        this.message = message;
+        this.stanza = stanza;
     }
 
     public int getEntryValue()
@@ -40,9 +40,9 @@ public class Entry
         return entryValue;
     }
 
-    public Message getMessage()
+    public Stanza getStanza()
     {
-        return message;
+        return stanza;
     }
     
     

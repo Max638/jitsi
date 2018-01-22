@@ -19,6 +19,7 @@ package net.java.sip.communicator.impl.protocol.jabber;
 
 import java.util.*;
 
+import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.StanzaBuffer;
 import net.java.sip.communicator.impl.protocol.jabber.extensions.vcardavatar.*;
 import net.java.sip.communicator.service.protocol.*;
 import net.java.sip.communicator.service.protocol.event.*;
@@ -50,6 +51,7 @@ import org.jxmpp.stringprep.*;
  * @author Damian Minkov
  * @author Lyubomir Marinov
  * @author Hristo Terezov
+ * @author Maksym Chmutov
  */
 public class OperationSetPersistentPresenceJabberImpl
     extends AbstractOperationSetPersistentPresence<
@@ -682,6 +684,7 @@ public class OperationSetPersistentPresenceJabberImpl
 
             try
             {
+                StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(presence);
                 parentProvider.getConnection().sendStanza(presence);
             }
             catch (NotConnectedException | InterruptedException e)
@@ -1883,6 +1886,7 @@ public class OperationSetPersistentPresenceJabberImpl
                 responsePacket.setTo(fromID);
                 try
                 {
+                    StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(responsePacket);
                     parentProvider.getConnection().sendStanza(responsePacket);
                 }
                 catch (NotConnectedException | InterruptedException e)

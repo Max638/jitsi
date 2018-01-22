@@ -24,7 +24,7 @@ import net.java.sip.communicator.service.protocol.Message;
 import net.java.sip.communicator.service.protocol.event.*;
 import net.java.sip.communicator.util.*;
 import net.java.sip.communicator.impl.protocol.jabber.extensions.*;
-import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.Entry;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.*;
 
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.SmackException.*;
@@ -150,17 +150,6 @@ public class OperationSetBasicInstantMessagingJabberImpl
      * Whether carbon is enabled or not.
      */
     private boolean isCarbonEnabled = false;
-
-    /**
-     * Indicates the number of messages that have been sent.
-     */
-    private int counterOfSentMessages = 0;
-
-    /**
-     * Unacknowledged messages that have been sent.
-     */
-    private Queue<Entry> unacknowledgedMessages = new LinkedList<>();
-
 
     /**
      * Creates an instance of this operation set.
@@ -513,11 +502,48 @@ public class OperationSetBasicInstantMessagingJabberImpl
 
             try
             {
-                this.unacknowledgedMessages.add(new Entry(this.counterOfSentMessages, msg));
+                StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(msg);
                 
                 jabberProvider.getConnection().sendStanza(msg);
                 
-                this.counterOfSentMessages++;
+                jabberProvider.getConnection().addAsyncStanzaListener(
+                    new StanzaListener()
+                    {
+                        
+                        @Override
+                        public void processStanza(Stanza arg0)
+                            throws NotConnectedException,
+                            InterruptedException
+                        {
+                            System.out.println("STANZA LISTENER");
+                            
+                        }
+                    }, new StanzaFilter()
+                    {
+                        
+                        @Override
+                        public boolean accept(Stanza arg0)
+                        {
+                            System.out.println("STANZA FILTER");
+                            return false;
+                        }
+                    });
+                
+                
+                //org.jivesoftware.smack.sm.packet.StreamManagement.AckRequest req =
+                    //org.jivesoftware.smack.sm.packet.StreamManagement.AckRequest.INSTANCE;
+                
+                /*try {
+                    jabberProvider.getConnection().addaddStanzaIdAcknowledgedListener(msg.getStanzaId(), new StanzaListener() {
+                        
+                        public void processPacket(Stanza packet) throws NotConnectedException {
+                            //updateMessageStatus(packet);
+                        }
+                    });
+                } catch (StreamManagementException.StreamManagementNotEnabledException e) {
+                    e.printStackTrace();
+                }*/
+
                 
             }
             catch (NotConnectedException | InterruptedException e)

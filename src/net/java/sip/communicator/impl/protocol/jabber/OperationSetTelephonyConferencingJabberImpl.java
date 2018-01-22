@@ -21,6 +21,7 @@ import java.util.*;
 
 import net.java.sip.communicator.impl.protocol.jabber.extensions.coin.*;
 import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.*;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.StanzaBuffer;
 import net.java.sip.communicator.service.protocol.*;
 import net.java.sip.communicator.service.protocol.event.*;
 import net.java.sip.communicator.service.protocol.media.*;
@@ -44,6 +45,7 @@ import org.jxmpp.jid.*;
  * @author Sebastien Vincent
  * @author Boris Grozev
  * @author Pawel Domas
+ * @author Maksym Chmutov
  */
 public class OperationSetTelephonyConferencingJabberImpl
     extends AbstractOperationSetTelephonyConferencing<
@@ -236,6 +238,7 @@ public class OperationSetTelephonyConferencingJabberImpl
             {
                 try
                 {
+                    StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(iq);
                     parentProvider.getConnection().sendStanza(iq);
                 }
                 catch (NotConnectedException | InterruptedException e)

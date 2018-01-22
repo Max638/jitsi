@@ -22,6 +22,7 @@ import java.util.*;
 
 import net.java.sip.communicator.impl.protocol.jabber.extensions.colibri.*;
 import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.*;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.StanzaBuffer;
 import net.java.sip.communicator.impl.protocol.jabber.jinglesdp.*;
 import net.java.sip.communicator.service.protocol.*;
 import net.java.sip.communicator.service.protocol.media.*;
@@ -42,6 +43,7 @@ import org.jxmpp.jid.*;
  *
  * @author Emil Ivov
  * @author Lyubomir Marinov
+ * @author Maksym Chmutov
  */
 public abstract class TransportManagerJabberImpl
     extends TransportManager<CallPeerJabberImpl>
@@ -254,6 +256,7 @@ public abstract class TransportManagerJabberImpl
         {
             try
             {
+                StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(conferenceRequest);
                 peer.getProtocolProvider().getConnection().sendStanza(
                         conferenceRequest);
             }

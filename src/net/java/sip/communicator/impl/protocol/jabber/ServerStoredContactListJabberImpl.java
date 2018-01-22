@@ -19,6 +19,7 @@ package net.java.sip.communicator.impl.protocol.jabber;
 
 import java.util.*;
 
+import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.StanzaBuffer;
 import net.java.sip.communicator.service.customavatar.*;
 import net.java.sip.communicator.service.protocol.*;
 import net.java.sip.communicator.service.protocol.event.*;
@@ -55,6 +56,7 @@ import static org.jivesoftware.smack.roster.packet.RosterPacket.ItemType.*;
  * @author Damian Minkov
  * @author Emil Ivov
  * @author Hristo Terezov
+ * @author Maksym Chmutov
  */
 public class ServerStoredContactListJabberImpl
 {
@@ -993,6 +995,7 @@ public class ServerStoredContactListJabberImpl
             }
             else
             {
+                StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(new Presence(Presence.Type.available));
                 getParentProvider().getConnection()
                         .sendStanza(new Presence(Presence.Type.available));
             }
