@@ -923,7 +923,8 @@ public class CallPeerJabberImpl
         if (logger.isTraceEnabled())
             logger.trace("will send ringing response: ");
 
-        StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(sessionInitIQ);
+        StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(
+            JinglePacketFactory.createRinging(sessionInitIQ));
         getProtocolProvider().getConnection().sendStanza(
                 JinglePacketFactory.createRinging(sessionInitIQ));
 
