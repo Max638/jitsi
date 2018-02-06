@@ -22,7 +22,7 @@ import java.awt.event.*;
 import java.util.List;
 
 import net.java.sip.communicator.impl.protocol.jabber.extensions.inputevt.*;
-import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.StanzaBuffer;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.ConnectionStanzaBuffer;
 import net.java.sip.communicator.service.protocol.*;
 import net.java.sip.communicator.service.protocol.event.*;
 
@@ -137,7 +137,7 @@ public class OperationSetDesktopSharingClientJabberImpl
 
             try
             {
-                StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(inputIQ);
+                ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(inputIQ);
                 parentProvider.getConnection().sendStanza(inputIQ);
             }
             catch (NotConnectedException | InterruptedException e)

@@ -17,10 +17,9 @@
  */
 package net.java.sip.communicator.impl.protocol.jabber;
 
-import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.StanzaBuffer;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.ConnectionStanzaBuffer;
 import net.java.sip.communicator.service.protocol.*;
 
-import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.SmackException.*;
 import org.jivesoftware.smack.packet.*;
 import org.jivesoftware.smack.roster.*;
@@ -82,7 +81,7 @@ public class OperationSetExtendedAuthorizationsJabberImpl
         responsePacket.setTo(((ContactJabberImpl) contact).getAddressAsJid());
         try
         {
-            StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(responsePacket);
+            ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(responsePacket);
             parentProvider.getConnection().sendStanza(responsePacket);
         }
         catch (NotConnectedException | InterruptedException e)
@@ -122,7 +121,7 @@ public class OperationSetExtendedAuthorizationsJabberImpl
         responsePacket.setTo(((ContactJabberImpl) contact).getAddressAsJid());
         try
         {
-            StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(responsePacket);
+            ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(responsePacket);
             parentProvider.getConnection().sendStanza(responsePacket);
         }
         catch (NotConnectedException | InterruptedException e)

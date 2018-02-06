@@ -21,7 +21,7 @@ import java.util.*;
 
 import net.java.sip.communicator.impl.protocol.jabber.extensions.coin.*;
 import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.*;
-import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.StanzaBuffer;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.ConnectionStanzaBuffer;
 import net.java.sip.communicator.service.protocol.*;
 import net.java.sip.communicator.service.protocol.event.*;
 import net.java.sip.communicator.service.protocol.media.*;
@@ -34,7 +34,6 @@ import org.jivesoftware.smack.filter.*;
 import org.jivesoftware.smack.iqrequest.IQRequestHandler;
 import org.jivesoftware.smack.packet.*;
 import org.jivesoftware.smack.packet.IQ.Type;
-import org.jivesoftware.smack.util.*;
 import org.jivesoftware.smackx.disco.packet.*;
 import org.jxmpp.jid.*;
 
@@ -238,7 +237,7 @@ public class OperationSetTelephonyConferencingJabberImpl
             {
                 try
                 {
-                    StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(iq);
+                    ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(iq);
                     parentProvider.getConnection().sendStanza(iq);
                 }
                 catch (NotConnectedException | InterruptedException e)

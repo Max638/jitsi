@@ -22,7 +22,7 @@ import java.util.*;
 
 import net.java.sip.communicator.impl.protocol.jabber.extensions.colibri.*;
 import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.*;
-import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.StanzaBuffer;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.ConnectionStanzaBuffer;
 import net.java.sip.communicator.impl.protocol.jabber.jinglesdp.*;
 import net.java.sip.communicator.service.protocol.*;
 import net.java.sip.communicator.service.protocol.event.*;
@@ -663,7 +663,7 @@ public class CallJabberImpl
                  */
                 conferenceRequest.setTo(colibri.getFrom());
                 conferenceRequest.setType(IQ.Type.set);
-                StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(conferenceRequest);
+                ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(conferenceRequest);
                 getProtocolProvider().getConnection().sendStanza(
                         conferenceRequest);
                 
@@ -727,7 +727,7 @@ public class CallJabberImpl
                     conferenceRequest.setType(IQ.Type.set);
                     conferenceRequest.addContent(requestContent);
 
-                    StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(conferenceRequest);
+                    ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(conferenceRequest);
                     getProtocolProvider().getConnection().sendStanza(
                             conferenceRequest);
                 }
@@ -1060,7 +1060,7 @@ public class CallJabberImpl
             callPeer.setState(CallPeerState.FAILED, reasonText);
             try
             {
-                StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(errResp);
+                ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(errResp);
                 getProtocolProvider().getConnection().sendStanza(errResp);
             }
             catch (SmackException.NotConnectedException | InterruptedException e)

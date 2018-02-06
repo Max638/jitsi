@@ -22,14 +22,13 @@ import java.util.*;
 
 import net.java.sip.communicator.impl.protocol.jabber.extensions.colibri.*;
 import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.*;
-import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.StanzaBuffer;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.ConnectionStanzaBuffer;
 import net.java.sip.communicator.impl.protocol.jabber.jinglesdp.*;
 import net.java.sip.communicator.service.protocol.*;
 import net.java.sip.communicator.service.protocol.media.*;
 import net.java.sip.communicator.util.*;
 
 import org.jitsi.service.neomedia.*;
-import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.SmackException.*;
 import org.jivesoftware.smack.packet.*;
 import org.jxmpp.jid.*;
@@ -256,7 +255,7 @@ public abstract class TransportManagerJabberImpl
         {
             try
             {
-                StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(conferenceRequest);
+                ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(conferenceRequest);
                 peer.getProtocolProvider().getConnection().sendStanza(
                         conferenceRequest);
             }

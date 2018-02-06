@@ -19,7 +19,7 @@ package net.java.sip.communicator.impl.protocol.jabber;
 
 import java.util.*;
 
-import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.StanzaBuffer;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.ConnectionStanzaBuffer;
 import net.java.sip.communicator.service.customavatar.*;
 import net.java.sip.communicator.service.protocol.*;
 import net.java.sip.communicator.service.protocol.event.*;
@@ -30,20 +30,14 @@ import org.jivesoftware.smack.XMPPException.*;
 import org.jivesoftware.smack.filter.*;
 import org.jivesoftware.smack.packet.*;
 import org.jivesoftware.smack.roster.*;
-import org.jivesoftware.smack.roster.packet.*;
-import org.jivesoftware.smack.roster.packet.RosterPacket.*;
-import org.jivesoftware.smack.util.*;
-import org.jivesoftware.smackx.disco.packet.*;
 import org.jivesoftware.smackx.nick.packet.*;
 import org.jxmpp.jid.*;
 import org.jxmpp.jid.impl.*;
 import org.jxmpp.jid.parts.*;
-import org.jxmpp.jid.util.*;
 import org.jxmpp.stringprep.*;
 import org.osgi.framework.*;
 
 import static org.jivesoftware.smack.SmackException.*;
-import static org.jivesoftware.smack.packet.XMPPError.Condition.*;
 import static org.jivesoftware.smack.roster.packet.RosterPacket.ItemType.*;
 
 /**
@@ -995,7 +989,7 @@ public class ServerStoredContactListJabberImpl
             }
             else
             {
-                StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(new Presence(Presence.Type.available));
+                ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(new Presence(Presence.Type.available));
                 getParentProvider().getConnection()
                         .sendStanza(new Presence(Presence.Type.available));
             }

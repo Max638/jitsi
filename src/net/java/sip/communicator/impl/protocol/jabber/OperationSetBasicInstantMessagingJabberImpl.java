@@ -23,7 +23,6 @@ import net.java.sip.communicator.service.protocol.*;
 import net.java.sip.communicator.service.protocol.Message;
 import net.java.sip.communicator.service.protocol.event.*;
 import net.java.sip.communicator.util.*;
-import net.java.sip.communicator.impl.protocol.jabber.extensions.*;
 import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.*;
 
 import org.jivesoftware.smack.*;
@@ -32,7 +31,6 @@ import org.jivesoftware.smack.filter.*;
 import org.jivesoftware.smack.packet.*;
 import org.jivesoftware.smack.provider.*;
 
-import org.jivesoftware.smack.sm.packet.StreamManagement.*;
 import org.jivesoftware.smack.util.*;
 import org.jivesoftware.smackx.carbons.CarbonCopyReceivedListener;
 import org.jivesoftware.smackx.carbons.CarbonManager;
@@ -502,7 +500,7 @@ public class OperationSetBasicInstantMessagingJabberImpl
 
             try
             {
-                StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(msg);
+                ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(msg);
                 
                 jabberProvider.getConnection().sendStanza(msg);
                 

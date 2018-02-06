@@ -20,6 +20,7 @@ package net.java.sip.communicator.impl.protocol.jabber.extensions.streammanageme
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Stanza;
 
 /**
@@ -28,41 +29,30 @@ import org.jivesoftware.smack.packet.Stanza;
  * @author Maksym Chmutov
  */
 
-public class StanzaBuffer
+public class StanzaConnectionBuffer
 {
-    private static StanzaBuffer Instance = null;
-    
     /**
      * Indicates the number that is going to be paired with the next stanza in the buffer.
      */
     private int stanzaPairedValue;
 
     /**
+     * Indicates the connection to which the buffer belongs to.
+     */
+    private XMPPConnection connection;
+
+    /**
      * Unacknowledged messages that have been sent.
      */
     private Queue<BufferEntry> unacknowledgedMessages = new LinkedList<>();
-    
-    
-    private StanzaBuffer() 
+
+
+    private StanzaConnectionBuffer(XMPPConnection connection)
     {
-        
+        this.connection = connection;
     }
-    
-    public static StanzaBuffer getStanzaBuffer() 
-    {
-        if(Instance == null) {   
-            synchronized(StanzaBuffer.class) 
-            {
-                if(Instance == null)
-                {
-                    Instance = new StanzaBuffer();
-                }
-            }
-        }
-        return Instance;
-    }
-    
-    public synchronized void addStanzaToBuffer(Stanza stanza)
+
+    public void addStanzaToBuffer(Stanza stanza)
     {
         unacknowledgedMessages.add(new BufferEntry(this.stanzaPairedValue, stanza));
         this.stanzaPairedValue++;
@@ -70,14 +60,14 @@ public class StanzaBuffer
         System.out.println("Queue entries"+ unacknowledgedMessages.size());
     }
 
-    public synchronized int getStanzaPairedValue()
+    public int getStanzaPairedValue()
     {
         return stanzaPairedValue;
     }
-    
-    public synchronized int getBufferSize()
+
+    public int getBufferSize()
     {
         return unacknowledgedMessages.size();
     }
-    
+
 }

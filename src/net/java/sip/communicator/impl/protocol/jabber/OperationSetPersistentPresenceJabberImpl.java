@@ -19,7 +19,7 @@ package net.java.sip.communicator.impl.protocol.jabber;
 
 import java.util.*;
 
-import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.StanzaBuffer;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.ConnectionStanzaBuffer;
 import net.java.sip.communicator.impl.protocol.jabber.extensions.vcardavatar.*;
 import net.java.sip.communicator.service.protocol.*;
 import net.java.sip.communicator.service.protocol.event.*;
@@ -33,7 +33,6 @@ import org.jivesoftware.smack.filter.*;
 import org.jivesoftware.smack.packet.*;
 import org.jivesoftware.smack.roster.*;
 import org.jivesoftware.smack.roster.packet.*;
-import org.jivesoftware.smack.util.*;
 import org.jivesoftware.smackx.nick.packet.*;
 import org.jivesoftware.smackx.vcardtemp.*;
 import org.jivesoftware.smackx.vcardtemp.packet.*;
@@ -684,7 +683,7 @@ public class OperationSetPersistentPresenceJabberImpl
 
             try
             {
-                StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(presence);
+                ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(presence);
                 parentProvider.getConnection().sendStanza(presence);
             }
             catch (NotConnectedException | InterruptedException e)
@@ -1886,7 +1885,7 @@ public class OperationSetPersistentPresenceJabberImpl
                 responsePacket.setTo(fromID);
                 try
                 {
-                    StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(responsePacket);
+                    ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(responsePacket);
                     parentProvider.getConnection().sendStanza(responsePacket);
                 }
                 catch (NotConnectedException | InterruptedException e)

@@ -21,7 +21,7 @@ import java.util.*;
 
 import net.java.sip.communicator.impl.protocol.jabber.extensions.condesc.*;
 import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.*;
-import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.StanzaBuffer;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.ConnectionStanzaBuffer;
 import net.java.sip.communicator.service.protocol.*;
 import net.java.sip.communicator.service.protocol.event.*;
 import net.java.sip.communicator.service.protocol.jabber.*;
@@ -1008,7 +1008,7 @@ public class OperationSetBasicTelephonyJabberImpl
             try
             {
                 // send ack, then process request
-                StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(IQ.createResultIQ(iq));
+                ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(IQ.createResultIQ(iq));
                 protocolProvider.getConnection().sendStanza(IQ.createResultIQ(iq));
                 processJingleIQ((JingleIQ) iq);
             }

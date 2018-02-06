@@ -19,7 +19,7 @@ package net.java.sip.communicator.impl.protocol.jabber;
 
 import net.java.sip.communicator.impl.protocol.jabber.extensions.condesc.*;
 import net.java.sip.communicator.impl.protocol.jabber.extensions.jitsimeet.*;
-import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.StanzaBuffer;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.ConnectionStanzaBuffer;
 import net.java.sip.communicator.service.protocol.*;
 import net.java.sip.communicator.service.protocol.Message;
 import net.java.sip.communicator.service.protocol.event.*;
@@ -1923,7 +1923,7 @@ public class ChatRoomJabberImpl
                 ConferenceDescriptionExtension.NAMESPACE);
             try
             {
-                StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(lastPresenceSent);
+                ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(lastPresenceSent);
                 provider.getConnection().sendStanza(lastPresenceSent);
             }
             catch (NotConnectedException | InterruptedException e)
@@ -2004,7 +2004,7 @@ public class ChatRoomJabberImpl
         lastPresenceSent.setStatus(newStatus);
         try
         {
-            StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(lastPresenceSent);
+            ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(lastPresenceSent);
             provider.getConnection().sendStanza(lastPresenceSent);
         }
         catch (NotConnectedException | InterruptedException e)
@@ -2030,7 +2030,7 @@ public class ChatRoomJabberImpl
             lastPresenceSent, extension, extension.getNamespace());
         try
         {
-            StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(lastPresenceSent);
+            ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(lastPresenceSent);
             provider.getConnection().sendStanza(lastPresenceSent);
         }
         catch (NotConnectedException | InterruptedException e)
@@ -2055,7 +2055,7 @@ public class ChatRoomJabberImpl
         setPacketExtension(lastPresenceSent, null, extension.getNamespace());
         try
         {
-            StanzaBuffer.getStanzaBuffer().addStanzaToBuffer(lastPresenceSent);
+            ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(lastPresenceSent);
             provider.getConnection().sendStanza(lastPresenceSent);
         }
         catch (NotConnectedException | InterruptedException e)
