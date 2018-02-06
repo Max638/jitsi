@@ -29,7 +29,7 @@ import org.jivesoftware.smack.packet.Stanza;
  * @author Maksym Chmutov
  */
 
-public class StanzaConnectionBuffer
+public class ConnectionStanzaBuffer
 {
     /**
      * Indicates the number that is going to be paired with the next stanza in the buffer.
@@ -47,7 +47,7 @@ public class StanzaConnectionBuffer
     private Queue<BufferEntry> unacknowledgedMessages = new LinkedList<>();
 
 
-    private StanzaConnectionBuffer(XMPPConnection connection)
+    private ConnectionStanzaBuffer(XMPPConnection connection)
     {
         this.connection = connection;
     }
