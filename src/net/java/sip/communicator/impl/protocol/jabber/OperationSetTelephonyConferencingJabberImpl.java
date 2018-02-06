@@ -237,7 +237,7 @@ public class OperationSetTelephonyConferencingJabberImpl
             {
                 try
                 {
-                    ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(iq);
+                    parentProvider.getConnectionStanzaBuffer().addStanzaToBuffer(iq);
                     parentProvider.getConnection().sendStanza(iq);
                 }
                 catch (NotConnectedException | InterruptedException e)

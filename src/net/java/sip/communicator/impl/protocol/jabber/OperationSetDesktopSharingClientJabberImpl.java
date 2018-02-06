@@ -137,7 +137,7 @@ public class OperationSetDesktopSharingClientJabberImpl
 
             try
             {
-                ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(inputIQ);
+                parentProvider.getConnectionStanzaBuffer().addStanzaToBuffer(inputIQ);
                 parentProvider.getConnection().sendStanza(inputIQ);
             }
             catch (NotConnectedException | InterruptedException e)

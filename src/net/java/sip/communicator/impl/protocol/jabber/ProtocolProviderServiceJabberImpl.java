@@ -36,6 +36,7 @@ import net.java.sip.communicator.impl.protocol.jabber.extensions.jibri.*;
 import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.*;
 import net.java.sip.communicator.impl.protocol.jabber.extensions.jingleinfo.*;
 import net.java.sip.communicator.impl.protocol.jabber.extensions.jitsimeet.*;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement.ConnectionStanzaBuffer;
 import net.java.sip.communicator.impl.protocol.jabber.extensions.thumbnail.*;
 import net.java.sip.communicator.service.certificate.*;
 import net.java.sip.communicator.service.dns.*;
@@ -226,6 +227,11 @@ public class ProtocolProviderServiceJabberImpl
      * Used to connect to a XMPP server.
      */
     private AbstractXMPPConnection connection;
+
+    /**
+     * Used to connect to store the stanzas until they have been received.
+     */
+    private ConnectionStanzaBuffer connectionStanzaBuffer;
 
     /**
      * The socket address of the XMPP server.
@@ -1149,12 +1155,14 @@ public class ProtocolProviderServiceJabberImpl
         {
             connection =
                 new XMPPBOSHConnection((BOSHConfiguration) confConn.build());
+            connectionStanzaBuffer = new ConnectionStanzaBuffer(this.connection);
         }
         else
         {
             connection =
                 new XMPPTCPConnection(
                     (XMPPTCPConnectionConfiguration) confConn.build());
+            connectionStanzaBuffer = new ConnectionStanzaBuffer(this.connection);
         }
 
         ReconnectionManager.getInstanceFor(connection).disableAutomaticReconnection();
@@ -3006,5 +3014,9 @@ public class ProtocolProviderServiceJabberImpl
         final Socket socket = getSocket();
 
         return (socket instanceof SSLSocket) ? (SSLSocket) socket : null;
+    }
+
+    public ConnectionStanzaBuffer getConnectionStanzaBuffer() {
+        return connectionStanzaBuffer;
     }
 }

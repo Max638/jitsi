@@ -47,7 +47,7 @@ public class ConnectionStanzaBuffer
     private Queue<BufferEntry> unacknowledgedMessages = new LinkedList<>();
 
 
-    private ConnectionStanzaBuffer(XMPPConnection connection)
+    public ConnectionStanzaBuffer(XMPPConnection connection)
     {
         this.connection = connection;
     }

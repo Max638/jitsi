@@ -989,7 +989,8 @@ public class ServerStoredContactListJabberImpl
             }
             else
             {
-                ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(new Presence(Presence.Type.available));
+                getParentProvider().getConnectionStanzaBuffer()
+                        .addStanzaToBuffer(new Presence(Presence.Type.available));
                 getParentProvider().getConnection()
                         .sendStanza(new Presence(Presence.Type.available));
             }

@@ -663,7 +663,8 @@ public class CallJabberImpl
                  */
                 conferenceRequest.setTo(colibri.getFrom());
                 conferenceRequest.setType(IQ.Type.set);
-                ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(conferenceRequest);
+                getProtocolProvider().getConnectionStanzaBuffer()
+                        .addStanzaToBuffer(conferenceRequest);
                 getProtocolProvider().getConnection().sendStanza(
                         conferenceRequest);
                 
@@ -727,7 +728,8 @@ public class CallJabberImpl
                     conferenceRequest.setType(IQ.Type.set);
                     conferenceRequest.addContent(requestContent);
 
-                    ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(conferenceRequest);
+                    getProtocolProvider().getConnectionStanzaBuffer()
+                            .addStanzaToBuffer(conferenceRequest);
                     getProtocolProvider().getConnection().sendStanza(
                             conferenceRequest);
                 }
@@ -1060,7 +1062,7 @@ public class CallJabberImpl
             callPeer.setState(CallPeerState.FAILED, reasonText);
             try
             {
-                ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(errResp);
+                getProtocolProvider().getConnectionStanzaBuffer().addStanzaToBuffer(errResp);
                 getProtocolProvider().getConnection().sendStanza(errResp);
             }
             catch (SmackException.NotConnectedException | InterruptedException e)

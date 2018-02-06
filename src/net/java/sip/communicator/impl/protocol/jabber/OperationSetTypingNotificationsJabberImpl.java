@@ -205,7 +205,7 @@ public class OperationSetTypingNotificationsJabberImpl
         message.setType(Message.Type.chat);
         message.setThread(threadID);
         message.setFrom(parentProvider.getConnection().getUser());
-        ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(message);
+        parentProvider.getConnectionStanzaBuffer().addStanzaToBuffer(message);
         parentProvider.getConnection().sendStanza(message);
     }
 

@@ -1923,7 +1923,7 @@ public class ChatRoomJabberImpl
                 ConferenceDescriptionExtension.NAMESPACE);
             try
             {
-                ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(lastPresenceSent);
+                provider.getConnectionStanzaBuffer().addStanzaToBuffer(lastPresenceSent);
                 provider.getConnection().sendStanza(lastPresenceSent);
             }
             catch (NotConnectedException | InterruptedException e)
@@ -2004,7 +2004,7 @@ public class ChatRoomJabberImpl
         lastPresenceSent.setStatus(newStatus);
         try
         {
-            ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(lastPresenceSent);
+            provider.getConnectionStanzaBuffer().addStanzaToBuffer(lastPresenceSent);
             provider.getConnection().sendStanza(lastPresenceSent);
         }
         catch (NotConnectedException | InterruptedException e)
@@ -2030,7 +2030,7 @@ public class ChatRoomJabberImpl
             lastPresenceSent, extension, extension.getNamespace());
         try
         {
-            ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(lastPresenceSent);
+            provider.getConnectionStanzaBuffer().addStanzaToBuffer(lastPresenceSent);
             provider.getConnection().sendStanza(lastPresenceSent);
         }
         catch (NotConnectedException | InterruptedException e)
@@ -2055,7 +2055,7 @@ public class ChatRoomJabberImpl
         setPacketExtension(lastPresenceSent, null, extension.getNamespace());
         try
         {
-            ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(lastPresenceSent);
+            provider.getConnectionStanzaBuffer().addStanzaToBuffer(lastPresenceSent);
             provider.getConnection().sendStanza(lastPresenceSent);
         }
         catch (NotConnectedException | InterruptedException e)

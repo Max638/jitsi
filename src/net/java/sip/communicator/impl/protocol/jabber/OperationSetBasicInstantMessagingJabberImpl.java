@@ -500,7 +500,7 @@ public class OperationSetBasicInstantMessagingJabberImpl
 
             try
             {
-                ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(msg);
+                jabberProvider.getConnectionStanzaBuffer().addStanzaToBuffer(msg);
                 
                 jabberProvider.getConnection().sendStanza(msg);
                 

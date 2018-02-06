@@ -197,7 +197,7 @@ public class CallPeerJabberImpl
             setState(CallPeerState.FAILED, reasonText);
             try
             {
-                ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(errResp);
+                getProtocolProvider().getConnectionStanzaBuffer().addStanzaToBuffer(errResp);
                 getProtocolProvider().getConnection().sendStanza(errResp);
             }
             catch (NotConnectedException | InterruptedException e)
@@ -218,7 +218,7 @@ public class CallPeerJabberImpl
         //relay needs to see it before letting hole punching techniques through.
         try
         {
-            ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(response);
+            getProtocolProvider().getConnectionStanzaBuffer().addStanzaToBuffer(response);
             getProtocolProvider().getConnection().sendStanza(response);
         }
         catch (NotConnectedException | InterruptedException e)
@@ -249,7 +249,7 @@ public class CallPeerJabberImpl
             setState(CallPeerState.FAILED, reasonText);
             try
             {
-                ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(errResp);
+                getProtocolProvider().getConnectionStanzaBuffer().addStanzaToBuffer(errResp);
                 getProtocolProvider().getConnection().sendStanza(errResp);
             }
             catch (NotConnectedException | InterruptedException e1)
@@ -384,8 +384,8 @@ public class CallPeerJabberImpl
                         (ReasonPacketExtension)reasonOtherExtension);
                 }
             }
-            
-            ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(responseIQ);
+
+            getProtocolProvider().getConnectionStanzaBuffer().addStanzaToBuffer(responseIQ);
             getProtocolProvider().getConnection().sendStanza(responseIQ);
         }
     }
@@ -441,7 +441,7 @@ public class CallPeerJabberImpl
 
         try
         {
-            ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(sessionInitIQ);
+            protocolProvider.getConnectionStanzaBuffer().addStanzaToBuffer(sessionInitIQ);
             protocolProvider.getConnection().sendStanza(sessionInitIQ);
         }
         catch (NotConnectedException | InterruptedException e)
@@ -506,7 +506,7 @@ public class CallPeerJabberImpl
                     reason);
 
             setState(CallPeerState.FAILED, reason);
-            ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(errResp);
+            getProtocolProvider().getConnectionStanzaBuffer().addStanzaToBuffer(errResp);
             getProtocolProvider().getConnection().sendStanza(errResp);
             return;
         }
@@ -619,7 +619,7 @@ public class CallPeerJabberImpl
                 setSenders(getMediaType(c), c.getSenders());
         }
 
-        ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(contentIQ);
+        getProtocolProvider().getConnectionStanzaBuffer().addStanzaToBuffer(contentIQ);
         getProtocolProvider().getConnection().sendStanza(contentIQ);
         mediaHandler.start();
 
@@ -688,7 +688,7 @@ public class CallPeerJabberImpl
                         reason);
 
             setState(CallPeerState.FAILED, reason);
-            ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(errResp);
+            getProtocolProvider().getConnectionStanzaBuffer().addStanzaToBuffer(errResp);
             getProtocolProvider().getConnection().sendStanza(errResp);
             return;
         }
@@ -711,7 +711,7 @@ public class CallPeerJabberImpl
                 "Error: content rejected");
 
             setState(CallPeerState.FAILED, "Error: content rejected");
-            ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(errResp);
+            getProtocolProvider().getConnectionStanzaBuffer().addStanzaToBuffer(errResp);
             getProtocolProvider().getConnection().sendStanza(errResp);
             return;
         }
@@ -801,7 +801,7 @@ public class CallPeerJabberImpl
                 exc.getClass().getName() + ": " + exc.getMessage());
 
             setState(CallPeerState.FAILED, "Error: " + exc.getMessage());
-            ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(errResp);
+            getProtocolProvider().getConnectionStanzaBuffer().addStanzaToBuffer(errResp);
             getProtocolProvider().getConnection().sendStanza(errResp);
             return;
         }
@@ -906,7 +906,7 @@ public class CallPeerJabberImpl
                         reasonText);
 
             setState(CallPeerState.FAILED, reasonText);
-            ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(errResp);
+            getProtocolProvider().getConnectionStanzaBuffer().addStanzaToBuffer(errResp);
             getProtocolProvider().getConnection().sendStanza(errResp);
             return;
         }
@@ -923,7 +923,7 @@ public class CallPeerJabberImpl
         if (logger.isTraceEnabled())
             logger.trace("will send ringing response: ");
 
-        ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(
+        getProtocolProvider().getConnectionStanzaBuffer().addStanzaToBuffer(
             JinglePacketFactory.createRinging(sessionInitIQ));
         getProtocolProvider().getConnection().sendStanza(
                 JinglePacketFactory.createRinging(sessionInitIQ));
@@ -942,7 +942,7 @@ public class CallPeerJabberImpl
                 && discoverInfo.containsFeature(
                         ProtocolProviderServiceJabberImpl.URN_IETF_RFC_3264))
         {
-            ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(
+            getProtocolProvider().getConnectionStanzaBuffer().addStanzaToBuffer(
                 JinglePacketFactory.createDescriptionInfo(
                     sessionInitIQ.getTo(),
                     sessionInitIQ.getFrom(),
@@ -1100,7 +1100,7 @@ public class CallPeerJabberImpl
                         reasonText);
 
             setState(CallPeerState.FAILED, reasonText);
-            ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(errResp);
+            getProtocolProvider().getConnectionStanzaBuffer().addStanzaToBuffer(errResp);
             getProtocolProvider().getConnection().sendStanza(errResp);
 
             return;
@@ -1150,7 +1150,7 @@ public class CallPeerJabberImpl
 
         try
         {
-            ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(onHoldIQ);
+            getProtocolProvider().getConnectionStanzaBuffer().addStanzaToBuffer(onHoldIQ);
             getProtocolProvider().getConnection().sendStanza(onHoldIQ);
         }
         catch (NotConnectedException | InterruptedException e)
@@ -1186,7 +1186,7 @@ public class CallPeerJabberImpl
                     getSID(),
                     contents);
 
-        ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(contentIQ);
+        protocolProvider.getConnectionStanzaBuffer().addStanzaToBuffer(contentIQ);
         protocolProvider.getConnection().sendStanza(contentIQ);
     }
 
@@ -1206,7 +1206,7 @@ public class CallPeerJabberImpl
             = new CoinPacketExtension(getCall().isConferenceFocus());
 
         sessionInfoIQ.addExtension(coinExt);
-        ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(sessionInfoIQ);
+        getProtocolProvider().getConnectionStanzaBuffer().addStanzaToBuffer(sessionInfoIQ);
         getProtocolProvider().getConnection().sendStanza(sessionInfoIQ);
     }
 
@@ -1355,7 +1355,7 @@ public class CallPeerJabberImpl
                         getSID(),
                         ext);
 
-            ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(contentIQ);
+            protocolProvider.getConnectionStanzaBuffer().addStanzaToBuffer(contentIQ);
             protocolProvider.getConnection().sendStanza(contentIQ);
         }
 
@@ -1414,7 +1414,7 @@ public class CallPeerJabberImpl
                     getSID(),
                     content);
 
-        ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(contentIQ);
+        protocolProvider.getConnectionStanzaBuffer().addStanzaToBuffer(contentIQ);
         protocolProvider.getConnection().sendStanza(contentIQ);
 
         try
@@ -1456,7 +1456,7 @@ public class CallPeerJabberImpl
                     getSID(),
                     Arrays.asList(content));
 
-        ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(contentIQ);
+        protocolProvider.getConnectionStanzaBuffer().addStanzaToBuffer(contentIQ);
         protocolProvider.getConnection().sendStanza(contentIQ);
         mediaHandler.removeContent(remoteContentName);
         setSenders(MediaType.VIDEO, SendersEnum.none);

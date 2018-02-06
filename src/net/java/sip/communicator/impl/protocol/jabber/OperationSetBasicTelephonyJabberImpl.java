@@ -1008,7 +1008,7 @@ public class OperationSetBasicTelephonyJabberImpl
             try
             {
                 // send ack, then process request
-                ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(IQ.createResultIQ(iq));
+                protocolProvider.getConnectionStanzaBuffer().addStanzaToBuffer(iq);
                 protocolProvider.getConnection().sendStanza(IQ.createResultIQ(iq));
                 processJingleIQ((JingleIQ) iq);
             }

@@ -255,7 +255,8 @@ public abstract class TransportManagerJabberImpl
         {
             try
             {
-                ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(conferenceRequest);
+                peer.getProtocolProvider().getConnectionStanzaBuffer()
+                        .addStanzaToBuffer(conferenceRequest);
                 peer.getProtocolProvider().getConnection().sendStanza(
                         conferenceRequest);
             }

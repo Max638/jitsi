@@ -683,7 +683,7 @@ public class OperationSetPersistentPresenceJabberImpl
 
             try
             {
-                ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(presence);
+                parentProvider.getConnectionStanzaBuffer().addStanzaToBuffer(presence);
                 parentProvider.getConnection().sendStanza(presence);
             }
             catch (NotConnectedException | InterruptedException e)
@@ -1885,7 +1885,7 @@ public class OperationSetPersistentPresenceJabberImpl
                 responsePacket.setTo(fromID);
                 try
                 {
-                    ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(responsePacket);
+                    parentProvider.getConnectionStanzaBuffer().addStanzaToBuffer(responsePacket);
                     parentProvider.getConnection().sendStanza(responsePacket);
                 }
                 catch (NotConnectedException | InterruptedException e)

@@ -81,7 +81,7 @@ public class OperationSetExtendedAuthorizationsJabberImpl
         responsePacket.setTo(((ContactJabberImpl) contact).getAddressAsJid());
         try
         {
-            ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(responsePacket);
+            parentProvider.getConnectionStanzaBuffer().addStanzaToBuffer(responsePacket);
             parentProvider.getConnection().sendStanza(responsePacket);
         }
         catch (NotConnectedException | InterruptedException e)
@@ -121,7 +121,7 @@ public class OperationSetExtendedAuthorizationsJabberImpl
         responsePacket.setTo(((ContactJabberImpl) contact).getAddressAsJid());
         try
         {
-            ConnectionStanzaBuffer.getStanzaBuffer().addStanzaToBuffer(responsePacket);
+            parentProvider.getConnectionStanzaBuffer().addStanzaToBuffer(responsePacket);
             parentProvider.getConnection().sendStanza(responsePacket);
         }
         catch (NotConnectedException | InterruptedException e)
