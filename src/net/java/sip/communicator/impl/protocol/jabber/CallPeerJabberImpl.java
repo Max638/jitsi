@@ -923,10 +923,10 @@ public class CallPeerJabberImpl
         if (logger.isTraceEnabled())
             logger.trace("will send ringing response: ");
 
-        getProtocolProvider().getConnectionStanzaBuffer().addStanzaToBuffer(
-            JinglePacketFactory.createRinging(sessionInitIQ));
-        getProtocolProvider().getConnection().sendStanza(
-                JinglePacketFactory.createRinging(sessionInitIQ));
+        
+        JingleIQ jingleIQ = JinglePacketFactory.createRinging(sessionInitIQ);
+        getProtocolProvider().getConnectionStanzaBuffer().addStanzaToBuffer(jingleIQ);
+        getProtocolProvider().getConnection().sendStanza(jingleIQ);
 
         synchronized(sessionInitiateSyncRoot)
         {
@@ -942,19 +942,15 @@ public class CallPeerJabberImpl
                 && discoverInfo.containsFeature(
                         ProtocolProviderServiceJabberImpl.URN_IETF_RFC_3264))
         {
-            getProtocolProvider().getConnectionStanzaBuffer().addStanzaToBuffer(
+            JingleIQ descriptionInfo = 
                 JinglePacketFactory.createDescriptionInfo(
                     sessionInitIQ.getTo(),
                     sessionInitIQ.getFrom(),
                     sessionInitIQ.getSID(),
-                    getMediaHandler().getLocalContentList()));
-            
-            getProtocolProvider().getConnection().sendStanza(
-                    JinglePacketFactory.createDescriptionInfo(
-                            sessionInitIQ.getTo(),
-                            sessionInitIQ.getFrom(),
-                            sessionInitIQ.getSID(),
-                            getMediaHandler().getLocalContentList()));
+                    getMediaHandler().getLocalContentList());
+            getProtocolProvider().getConnectionStanzaBuffer().addStanzaToBuffer(
+                descriptionInfo);
+            getProtocolProvider().getConnection().sendStanza(descriptionInfo);
         }
 
         // process members if any

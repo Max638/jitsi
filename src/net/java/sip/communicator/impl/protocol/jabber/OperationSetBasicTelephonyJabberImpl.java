@@ -1008,8 +1008,9 @@ public class OperationSetBasicTelephonyJabberImpl
             try
             {
                 // send ack, then process request
-                protocolProvider.getConnectionStanzaBuffer().addStanzaToBuffer(IQ.createResultIQ(iq));
-                protocolProvider.getConnection().sendStanza(IQ.createResultIQ(iq));
+                IQ resultIQ = IQ.createResultIQ(iq);
+                protocolProvider.getConnectionStanzaBuffer().addStanzaToBuffer(resultIQ);
+                protocolProvider.getConnection().sendStanza(resultIQ);
                 processJingleIQ((JingleIQ) iq);
             }
             catch (Exception e)

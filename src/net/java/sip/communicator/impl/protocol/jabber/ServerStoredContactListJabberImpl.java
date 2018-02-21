@@ -989,10 +989,11 @@ public class ServerStoredContactListJabberImpl
             }
             else
             {
+                Presence presenceTypeAvailable = new Presence(Presence.Type.available);
                 getParentProvider().getConnectionStanzaBuffer()
-                        .addStanzaToBuffer(new Presence(Presence.Type.available));
+                        .addStanzaToBuffer(presenceTypeAvailable);
                 getParentProvider().getConnection()
-                        .sendStanza(new Presence(Presence.Type.available));
+                        .sendStanza(presenceTypeAvailable);
             }
         }
         catch (OperationFailedException
