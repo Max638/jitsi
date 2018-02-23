@@ -57,7 +57,6 @@ import static org.jivesoftware.smack.packet.XMPPError.Condition.*;
  * @author Alain Knaebel
  * @author Emil Ivov
  * @author Hristo Terezov
- * @author Maksym Chmutov
  */
 public class OperationSetBasicInstantMessagingJabberImpl
     extends AbstractOperationSetBasicInstantMessaging
@@ -500,49 +499,7 @@ public class OperationSetBasicInstantMessagingJabberImpl
 
             try
             {
-                jabberProvider.getConnectionStanzaBuffer().addStanzaToBuffer(msg);
-                
                 jabberProvider.getConnection().sendStanza(msg);
-                
-                jabberProvider.getConnection().addAsyncStanzaListener(
-                    new StanzaListener()
-                    {
-                        
-                        @Override
-                        public void processStanza(Stanza arg0)
-                            throws NotConnectedException,
-                            InterruptedException
-                        {
-                            System.out.println("STANZA LISTENER");
-                            
-                        }
-                    }, new StanzaFilter()
-                    {
-                        
-                        @Override
-                        public boolean accept(Stanza arg0)
-                        {
-                            System.out.println("STANZA FILTER");
-                            return false;
-                        }
-                    });
-                
-                
-                //org.jivesoftware.smack.sm.packet.StreamManagement.AckRequest req =
-                    //org.jivesoftware.smack.sm.packet.StreamManagement.AckRequest.INSTANCE;
-                
-                /*try {
-                    jabberProvider.getConnection().addaddStanzaIdAcknowledgedListener(msg.getStanzaId(), new StanzaListener() {
-                        
-                        public void processPacket(Stanza packet) throws NotConnectedException {
-                            //updateMessageStatus(packet);
-                        }
-                    });
-                } catch (StreamManagementException.StreamManagementNotEnabledException e) {
-                    e.printStackTrace();
-                }*/
-
-                
             }
             catch (NotConnectedException | InterruptedException e)
             {

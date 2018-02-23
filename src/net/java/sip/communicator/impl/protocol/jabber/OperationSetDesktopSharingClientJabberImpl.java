@@ -40,7 +40,6 @@ import org.jxmpp.jid.*;
  * protocol.
  *
  * @author Sebastien Vincent
- * @author Maksym Chmutov
  */
 public class OperationSetDesktopSharingClientJabberImpl
     extends AbstractOperationSetDesktopSharingClient
@@ -137,7 +136,6 @@ public class OperationSetDesktopSharingClientJabberImpl
 
             try
             {
-                parentProvider.getConnectionStanzaBuffer().addStanzaToBuffer(inputIQ);
                 parentProvider.getConnection().sendStanza(inputIQ);
             }
             catch (NotConnectedException | InterruptedException e)

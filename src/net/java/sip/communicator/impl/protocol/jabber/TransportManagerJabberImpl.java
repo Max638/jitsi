@@ -42,7 +42,6 @@ import org.jxmpp.jid.*;
  *
  * @author Emil Ivov
  * @author Lyubomir Marinov
- * @author Maksym Chmutov
  */
 public abstract class TransportManagerJabberImpl
     extends TransportManager<CallPeerJabberImpl>
@@ -255,8 +254,6 @@ public abstract class TransportManagerJabberImpl
         {
             try
             {
-                peer.getProtocolProvider().getConnectionStanzaBuffer()
-                        .addStanzaToBuffer(conferenceRequest);
                 peer.getProtocolProvider().getConnection().sendStanza(
                         conferenceRequest);
             }

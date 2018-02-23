@@ -44,7 +44,6 @@ import org.jxmpp.jid.Jid;
  * @author Emil Ivov
  * @author Lyubomir Marinov
  * @author Boris Grozev
- * @author Maksym Chmutov
  */
 public class CallJabberImpl
     extends MediaAwareCall<
@@ -663,8 +662,6 @@ public class CallJabberImpl
                  */
                 conferenceRequest.setTo(colibri.getFrom());
                 conferenceRequest.setType(IQ.Type.set);
-                getProtocolProvider().getConnectionStanzaBuffer()
-                        .addStanzaToBuffer(conferenceRequest);
                 getProtocolProvider().getConnection().sendStanza(
                         conferenceRequest);
                 
@@ -728,8 +725,6 @@ public class CallJabberImpl
                     conferenceRequest.setType(IQ.Type.set);
                     conferenceRequest.addContent(requestContent);
 
-                    getProtocolProvider().getConnectionStanzaBuffer()
-                            .addStanzaToBuffer(conferenceRequest);
                     getProtocolProvider().getConnection().sendStanza(
                             conferenceRequest);
                 }
@@ -1062,7 +1057,6 @@ public class CallJabberImpl
             callPeer.setState(CallPeerState.FAILED, reasonText);
             try
             {
-                getProtocolProvider().getConnectionStanzaBuffer().addStanzaToBuffer(errResp);
                 getProtocolProvider().getConnection().sendStanza(errResp);
             }
             catch (SmackException.NotConnectedException | InterruptedException e)

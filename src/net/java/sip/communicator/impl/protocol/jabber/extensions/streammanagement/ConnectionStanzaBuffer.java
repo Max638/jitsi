@@ -17,11 +17,18 @@
  */
 package net.java.sip.communicator.impl.protocol.jabber.extensions.streammanagement;
 
+import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.packet.Stanza;
+import javax.swing.SwingUtilities;
+
+import org.jivesoftware.smack.SmackException.*;
+import org.jivesoftware.smack.*;
+import org.jivesoftware.smack.packet.*;
+import org.jivesoftware.smack.sm.packet.StreamManagement.*;
+import org.jivesoftware.smack.util.Async;
+import org.xmlpull.v1.XmlPullParser;
 
 /**
  * The entry used in unacknowledgedMessages queue.
@@ -32,10 +39,19 @@ import org.jivesoftware.smack.packet.Stanza;
 public class ConnectionStanzaBuffer
 {
     /**
+     * Number of the required sent stanzas for requiring ack.
+     */
+    private static final int STANZAS_FOR_ACK_REQUEST = 5;
+    /**
      * Indicates the number that is going to be paired with the next stanza in the buffer.
      */
-    private int stanzaPairedValue;
-
+    private long stanzaPairedValue;
+    
+    /**
+     * Counter for a more efficient approach. We request an ack every five 5 sent stanzas.
+     */
+    private int counter;
+    
     /**
      * Indicates the connection to which the buffer belongs to.
      */
@@ -45,22 +61,18 @@ public class ConnectionStanzaBuffer
      * Unacknowledged messages that have been sent.
      */
     private Queue<BufferEntry> unacknowledgedMessages = new LinkedList<>();
+    
+    private StanzaListener packetReaderListener = null;
 
+    public final Inbound inbound = new Inbound();
+    public final Outbound outbound = new Outbound();
 
     public ConnectionStanzaBuffer(XMPPConnection connection)
     {
         this.connection = connection;
     }
 
-    public void addStanzaToBuffer(Stanza stanza)
-    {
-        unacknowledgedMessages.add(new BufferEntry(this.stanzaPairedValue, stanza));
-        this.stanzaPairedValue++;
-        System.out.println("Stanza paired value"+ stanzaPairedValue);
-        System.out.println("Queue entries"+ unacknowledgedMessages.size());
-    }
-
-    public int getStanzaPairedValue()
+    public long getStanzaPairedValue()
     {
         return stanzaPairedValue;
     }
@@ -69,5 +81,84 @@ public class ConnectionStanzaBuffer
     {
         return unacknowledgedMessages.size();
     }
+    
+    private void sendAckRequest() 
+    {
+        AckRequest req = AckRequest.INSTANCE;
+        try
+        {
+            connection.sendNonza(req);
+        }
+        catch (NotConnectedException | InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+    }
+    
+    private void resetCounter() 
+    {
+        this.counter = 0;
+    }
+    
+    private void incrementCounter() 
+    {
+        this.counter++;
+    }
+    
+    private void incrementStanzaPairedValue() 
+    {
+        this.stanzaPairedValue++;
+    }
+    
+    public class Outbound 
+        implements StanzaListener
+        {
 
+        @Override
+        public void processStanza(Stanza outboundStanza)
+            throws NotConnectedException,
+            InterruptedException
+        {
+            try 
+            {
+                if(outboundStanza != null) 
+                {
+                    unacknowledgedMessages.add(new BufferEntry(stanzaPairedValue, outboundStanza));
+                    incrementStanzaPairedValue();
+                    incrementCounter();
+                    if(counter >= STANZAS_FOR_ACK_REQUEST)
+                    {
+                       sendAckRequest();
+                       resetCounter();
+                    }
+                }
+                System.out.println("Stanza CATCHED! -> " +outboundStanza.getStanzaId() +" Type: "+outboundStanza.toXML() + " Queue entries"+ getBufferSize() + "Stanza paired value"+ stanzaPairedValue);
+            }
+            catch(Throwable t)
+            {
+                t.printStackTrace();
+            }
+        }
+            
+        }
+    
+    public class Inbound
+        implements StanzaListener
+    {
+
+        @Override
+        public void processStanza(Stanza packet)
+            throws NotConnectedException,
+            InterruptedException
+        {
+            // TODO Auto-generated method stub
+            
+        }
+
+    }
 }
+
+
+
+
+

@@ -26,16 +26,16 @@ import org.jivesoftware.smack.packet.*;
  */
 public class BufferEntry
 {
-    private int entryValue;
+    private long entryValue;
     private Stanza stanza;
     
-    public BufferEntry(int entryValue, Stanza stanza)
+    public BufferEntry(long entryValue, Stanza stanza)
     {
         this.entryValue = entryValue;
         this.stanza = stanza;
     }
 
-    public int getEntryValue()
+    public long getEntryValue()
     {
         return entryValue;
     }

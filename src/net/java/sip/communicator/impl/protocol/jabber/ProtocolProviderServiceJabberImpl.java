@@ -1155,14 +1155,12 @@ public class ProtocolProviderServiceJabberImpl
         {
             connection =
                 new XMPPBOSHConnection((BOSHConfiguration) confConn.build());
-            connectionStanzaBuffer = new ConnectionStanzaBuffer(this.connection);
         }
         else
         {
             connection =
                 new XMPPTCPConnection(
                     (XMPPTCPConnectionConfiguration) confConn.build());
-            connectionStanzaBuffer = new ConnectionStanzaBuffer(this.connection);
         }
 
         ReconnectionManager.getInstanceFor(connection).disableAutomaticReconnection();
@@ -1214,6 +1212,8 @@ public class ProtocolProviderServiceJabberImpl
             logger.error("Error creating custom trust manager", e);
             throw new JitsiXmppException("Error creating custom trust manager", e);
         }
+        
+        createConnectionStanzaBuffer(isBosh);
 
         if(debugger == null)
         {
@@ -3015,8 +3015,25 @@ public class ProtocolProviderServiceJabberImpl
 
         return (socket instanceof SSLSocket) ? (SSLSocket) socket : null;
     }
-
-    public ConnectionStanzaBuffer getConnectionStanzaBuffer() {
-        return connectionStanzaBuffer;
+    
+    /**
+     * Creates a ConnectionStanzaBuffer to store the stanzas 
+     * that have not been confirmed yet by the server.
+     */
+    private void createConnectionStanzaBuffer(boolean connectionIsBosh) 
+    {
+        if(connectionStanzaBuffer == null) 
+        {
+            connectionStanzaBuffer = new ConnectionStanzaBuffer(this.connection);
+            
+            
+            connection.addPacketInterceptor(connectionStanzaBuffer.outbound, null);
+            
+            if(connection instanceof XMPPTCPConnection)
+            {
+                
+            }
+            
+        }
     }
 }

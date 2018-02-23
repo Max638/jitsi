@@ -44,7 +44,6 @@ import org.jxmpp.jid.*;
  * @author Damian Minkov
  * @author Emil Ivov
  * @author Hristo Terezov
- * @author Maksym Chmutov
  */
 public class OperationSetTypingNotificationsJabberImpl
     extends AbstractOperationSetTypingNotifications<ProtocolProviderServiceJabberImpl>
@@ -205,7 +204,6 @@ public class OperationSetTypingNotificationsJabberImpl
         message.setType(Message.Type.chat);
         message.setThread(threadID);
         message.setFrom(parentProvider.getConnection().getUser());
-        parentProvider.getConnectionStanzaBuffer().addStanzaToBuffer(message);
         parentProvider.getConnection().sendStanza(message);
     }
 
