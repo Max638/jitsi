@@ -27,6 +27,7 @@ import org.jivesoftware.smack.SmackException.*;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.*;
 import org.jivesoftware.smack.sm.packet.StreamManagement.*;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.util.Async;
 import org.xmlpull.v1.XmlPullParser;
 
@@ -41,7 +42,7 @@ public class ConnectionStanzaBuffer
     /**
      * Number of the required sent stanzas for requiring ack.
      */
-    private static final int STANZAS_FOR_ACK_REQUEST = 5;
+    private static final int STANZAS_FOR_ACK_REQUEST = 1;
     /**
      * Indicates the number that is going to be paired with the next stanza in the buffer.
      */
@@ -109,6 +110,21 @@ public class ConnectionStanzaBuffer
     {
         this.stanzaPairedValue++;
     }
+
+    public void setUseStreamManagement()
+    {
+        ((XMPPTCPConnection)connection).setUseStreamManagement(true);
+    }
+
+    private void addInboundAsStanzaAcknowledgedListener()
+    {
+        System.out.println(((XMPPTCPConnection)connection).isSmAvailable()+ " "+ ((XMPPTCPConnection)connection).isSmEnabled());
+        if(((XMPPTCPConnection)connection).isSmAvailable() && ((XMPPTCPConnection)connection).isSmEnabled())
+        {
+            System.out.println("IT IS CREATED.");
+            ((XMPPTCPConnection) connection).addStanzaAcknowledgedListener(this.inbound);
+        }
+    }
     
     public class Outbound 
         implements StanzaListener
@@ -128,8 +144,11 @@ public class ConnectionStanzaBuffer
                     incrementCounter();
                     if(counter >= STANZAS_FOR_ACK_REQUEST)
                     {
-                       sendAckRequest();
-                       resetCounter();
+                        if(connection instanceof XMPPTCPConnection)
+                        {
+                            ((XMPPTCPConnection)connection).requestSmAcknowledgement();
+                            resetCounter();
+                        }
                     }
                 }
                 System.out.println("Stanza CATCHED! -> " +outboundStanza.getStanzaId() +" Type: "+outboundStanza.toXML() + " Queue entries"+ getBufferSize() + "Stanza paired value"+ stanzaPairedValue);
@@ -151,8 +170,7 @@ public class ConnectionStanzaBuffer
             throws NotConnectedException,
             InterruptedException
         {
-            // TODO Auto-generated method stub
-            
+            System.out.println("ACK RECEIVED! from: "+packet.toXML());
         }
 
     }
