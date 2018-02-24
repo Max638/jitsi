@@ -50,7 +50,6 @@ import static org.jivesoftware.smack.roster.packet.RosterPacket.ItemType.*;
  * @author Damian Minkov
  * @author Emil Ivov
  * @author Hristo Terezov
- * @author Maksym Chmutov
  */
 public class ServerStoredContactListJabberImpl
 {
@@ -990,8 +989,6 @@ public class ServerStoredContactListJabberImpl
             else
             {
                 Presence presenceTypeAvailable = new Presence(Presence.Type.available);
-                getParentProvider().getConnectionStanzaBuffer()
-                        .addStanzaToBuffer(presenceTypeAvailable);
                 getParentProvider().getConnection()
                         .sendStanza(presenceTypeAvailable);
             }

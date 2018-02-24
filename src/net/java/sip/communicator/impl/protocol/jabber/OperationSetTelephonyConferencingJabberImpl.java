@@ -44,7 +44,6 @@ import org.jxmpp.jid.*;
  * @author Sebastien Vincent
  * @author Boris Grozev
  * @author Pawel Domas
- * @author Maksym Chmutov
  */
 public class OperationSetTelephonyConferencingJabberImpl
     extends AbstractOperationSetTelephonyConferencing<
@@ -237,7 +236,6 @@ public class OperationSetTelephonyConferencingJabberImpl
             {
                 try
                 {
-                    parentProvider.getConnectionStanzaBuffer().addStanzaToBuffer(iq);
                     parentProvider.getConnection().sendStanza(iq);
                 }
                 catch (NotConnectedException | InterruptedException e)

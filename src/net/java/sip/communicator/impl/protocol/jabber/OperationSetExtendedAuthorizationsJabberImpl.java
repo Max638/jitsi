@@ -29,7 +29,6 @@ import org.jivesoftware.smack.roster.packet.*;
  * Extended authorization implementation for jabber provider.
  *
  * @author Damian Minkov
- * @author Maksym Chmutov
  */
 public class OperationSetExtendedAuthorizationsJabberImpl
     implements OperationSetExtendedAuthorizations
@@ -81,7 +80,6 @@ public class OperationSetExtendedAuthorizationsJabberImpl
         responsePacket.setTo(((ContactJabberImpl) contact).getAddressAsJid());
         try
         {
-            parentProvider.getConnectionStanzaBuffer().addStanzaToBuffer(responsePacket);
             parentProvider.getConnection().sendStanza(responsePacket);
         }
         catch (NotConnectedException | InterruptedException e)
@@ -121,7 +119,6 @@ public class OperationSetExtendedAuthorizationsJabberImpl
         responsePacket.setTo(((ContactJabberImpl) contact).getAddressAsJid());
         try
         {
-            parentProvider.getConnectionStanzaBuffer().addStanzaToBuffer(responsePacket);
             parentProvider.getConnection().sendStanza(responsePacket);
         }
         catch (NotConnectedException | InterruptedException e)

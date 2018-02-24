@@ -50,7 +50,6 @@ import org.jxmpp.stringprep.*;
  * @author Damian Minkov
  * @author Lyubomir Marinov
  * @author Hristo Terezov
- * @author Maksym Chmutov
  */
 public class OperationSetPersistentPresenceJabberImpl
     extends AbstractOperationSetPersistentPresence<
@@ -683,7 +682,6 @@ public class OperationSetPersistentPresenceJabberImpl
 
             try
             {
-                parentProvider.getConnectionStanzaBuffer().addStanzaToBuffer(presence);
                 parentProvider.getConnection().sendStanza(presence);
             }
             catch (NotConnectedException | InterruptedException e)
@@ -1885,7 +1883,6 @@ public class OperationSetPersistentPresenceJabberImpl
                 responsePacket.setTo(fromID);
                 try
                 {
-                    parentProvider.getConnectionStanzaBuffer().addStanzaToBuffer(responsePacket);
                     parentProvider.getConnection().sendStanza(responsePacket);
                 }
                 catch (NotConnectedException | InterruptedException e)

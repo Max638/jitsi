@@ -50,7 +50,6 @@ import org.jxmpp.stringprep.*;
  * @author Lyubomir Marinov
  * @author Sebastien Vincent
  * @author Boris Grozev
- * @author Maksym Chmutov
  */
 public class OperationSetBasicTelephonyJabberImpl
    extends AbstractOperationSetBasicTelephony<ProtocolProviderServiceJabberImpl>
@@ -1009,7 +1008,6 @@ public class OperationSetBasicTelephonyJabberImpl
             {
                 // send ack, then process request
                 IQ resultIQ = IQ.createResultIQ(iq);
-                protocolProvider.getConnectionStanzaBuffer().addStanzaToBuffer(resultIQ);
                 protocolProvider.getConnection().sendStanza(resultIQ);
                 processJingleIQ((JingleIQ) iq);
             }

@@ -61,7 +61,6 @@ import static org.jivesoftware.smack.packet.XMPPError.Condition.*;
  * @author Valentin Martinet
  * @author Boris Grozev
  * @author Hristo Terezov
- * @author Maksym Chmutov
  */
 public class ChatRoomJabberImpl
     extends AbstractChatRoom
@@ -1923,7 +1922,6 @@ public class ChatRoomJabberImpl
                 ConferenceDescriptionExtension.NAMESPACE);
             try
             {
-                provider.getConnectionStanzaBuffer().addStanzaToBuffer(lastPresenceSent);
                 provider.getConnection().sendStanza(lastPresenceSent);
             }
             catch (NotConnectedException | InterruptedException e)
@@ -2004,7 +2002,6 @@ public class ChatRoomJabberImpl
         lastPresenceSent.setStatus(newStatus);
         try
         {
-            provider.getConnectionStanzaBuffer().addStanzaToBuffer(lastPresenceSent);
             provider.getConnection().sendStanza(lastPresenceSent);
         }
         catch (NotConnectedException | InterruptedException e)
@@ -2030,7 +2027,6 @@ public class ChatRoomJabberImpl
             lastPresenceSent, extension, extension.getNamespace());
         try
         {
-            provider.getConnectionStanzaBuffer().addStanzaToBuffer(lastPresenceSent);
             provider.getConnection().sendStanza(lastPresenceSent);
         }
         catch (NotConnectedException | InterruptedException e)
@@ -2055,7 +2051,6 @@ public class ChatRoomJabberImpl
         setPacketExtension(lastPresenceSent, null, extension.getNamespace());
         try
         {
-            provider.getConnectionStanzaBuffer().addStanzaToBuffer(lastPresenceSent);
             provider.getConnection().sendStanza(lastPresenceSent);
         }
         catch (NotConnectedException | InterruptedException e)
