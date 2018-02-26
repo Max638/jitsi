@@ -1163,7 +1163,11 @@ public class ProtocolProviderServiceJabberImpl
                     (XMPPTCPConnectionConfiguration) confConn.build());
         }
 
+        enableStreamManagementAndResumptionIfPossible();
+
         ReconnectionManager.getInstanceFor(connection).disableAutomaticReconnection();
+
+        System.out.println("IS ENABLED autoreconect"+ReconnectionManager.getInstanceFor(connection).isAutomaticReconnectEnabled());
         this.address = address;
 
         try
@@ -1416,7 +1420,9 @@ public class ProtocolProviderServiceJabberImpl
                         opSet.getCurrentStatusMessage());
                 }
 
-                connection.disconnect(unavailablePresence);
+                ((XMPPTCPConnection)connection).instantShutdown();
+                System.out.println("IS DISCONNECTED BUT RESUMPTION POSSIBLE: "+((XMPPTCPConnection)connection).isDisconnectedButSmResumptionPossible());
+                //connection.disconnect(unavailablePresence);
             } catch (Exception e)
             {}
 
@@ -1983,27 +1989,30 @@ public class ProtocolProviderServiceJabberImpl
      * any resources that it might have taken and prepare for
      * shutdown/garbage collection.
      */
-    public void shutdown()
-    {
-        synchronized(initializationLock)
-        {
-            if (logger.isTraceEnabled())
-                logger.trace("Killing the Jabber Protocol Provider.");
+    public void shutdown() {
+        if (connection instanceof XMPPTCPConnection) {
+            ((XMPPTCPConnection) connection).instantShutdown();
+        }
+        else {
+            synchronized (initializationLock) {
+                if (logger.isTraceEnabled())
+                    logger.trace("Killing the Jabber Protocol Provider.");
 
-            //kill all active calls
-            OperationSetBasicTelephonyJabberImpl telephony
-                = (OperationSetBasicTelephonyJabberImpl)getOperationSet(
-                    OperationSetBasicTelephony.class);
-            if (telephony != null)
-            {
-                telephony.shutdown();
+                //kill all active calls
+                OperationSetBasicTelephonyJabberImpl telephony
+                        = (OperationSetBasicTelephonyJabberImpl) getOperationSet(
+                        OperationSetBasicTelephony.class);
+                if (telephony != null) {
+                    telephony.shutdown();
+                }
+
+                disconnectAndCleanConnection();
+
+                isInitialized = false;
             }
-
-            disconnectAndCleanConnection();
-
-            isInitialized = false;
         }
     }
+
 
     /**
      * Returns true if the provider service implementation is initialized and
@@ -3027,6 +3036,14 @@ public class ProtocolProviderServiceJabberImpl
             connectionStanzaBuffer = new ConnectionStanzaBuffer(connection);
             connection.addPacketInterceptor(connectionStanzaBuffer.outbound, null);
             ((XMPPTCPConnection) connection).addStanzaAcknowledgedListener(connectionStanzaBuffer.inbound);
+        }
+    }
+
+    private void enableStreamManagementAndResumptionIfPossible()
+    {
+        if(connection instanceof XMPPTCPConnection) {
+            ((XMPPTCPConnection) connection).setUseStreamManagement(true);
+            ((XMPPTCPConnection) connection).setUseStreamManagementResumption(true);
         }
     }
 
