@@ -23,6 +23,7 @@ import java.util.Queue;
 
 import javax.swing.SwingUtilities;
 
+import net.sf.fmj.ejmf.toolkit.util.SourcedTimer;
 import org.jivesoftware.smack.SmackException.*;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.*;
@@ -146,8 +147,10 @@ public class ConnectionStanzaBuffer
                     {
                         if(connection instanceof XMPPTCPConnection)
                         {
-                            ((XMPPTCPConnection)connection).requestSmAcknowledgement();
+                            //((XMPPTCPConnection)connection).requestSmAcknowledgement();
                             resetCounter();
+                            System.out.println("IS SMResumptionPossible: "+ ((XMPPTCPConnection)connection).isSmResumptionPossible());
+
                         }
                     }
                 }
@@ -171,6 +174,8 @@ public class ConnectionStanzaBuffer
             InterruptedException
         {
             System.out.println("ACK RECEIVED! from: "+packet.toXML());
+            System.out.println("POSSIBLE: "+((XMPPTCPConnection)connection).isSmResumptionPossible());
+
         }
 
     }
