@@ -80,7 +80,7 @@
 	<classpathentry kind="lib" path="lib/installer-exclude/jackson-core-2.5.3.jar"/>
 	<classpathentry kind="lib" path="lib/installer-exclude/dnssecjava-1.1.jar" sourcepath="/dnssecjava"/>
 	<classpathentry kind="lib" path="lib/installer-exclude/gson-2.8.0.jar"/>
-	<classpathentry kind="lib" path="lib/installer-exclude/smack-core-4.2.1.jar" sourcepath="C:/Users/Max/Desktop/smack-core-4.2.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/installer-exclude/smack-core-4.2.1.jar" sourcepath="/home/christian/Documents/smack-core-4.2.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/installer-exclude/smack-debug-4.2.1.jar" sourcepath="C:/Users/Max/Desktop/smack-debug-4.2.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/installer-exclude/smack-extensions-4.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/installer-exclude/smack-im-4.2.1.jar"/>

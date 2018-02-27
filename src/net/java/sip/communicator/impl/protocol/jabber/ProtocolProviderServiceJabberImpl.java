@@ -1150,6 +1150,9 @@ public class ProtocolProviderServiceJabberImpl
                 if(oldConnection.streamWasResumed()) {
                     succesfullyResumed = true;
                     connection = oldConnection;
+                } else {
+                    System.out.println("Stream was not resumed");
+                    Thread.sleep(1000);
                 }
             }
             oldConnection = null;
