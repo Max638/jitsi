@@ -1420,9 +1420,7 @@ public class ProtocolProviderServiceJabberImpl
                         opSet.getCurrentStatusMessage());
                 }
 
-                ((XMPPTCPConnection)connection).instantShutdown();
-                System.out.println("IS DISCONNECTED BUT RESUMPTION POSSIBLE: "+((XMPPTCPConnection)connection).isDisconnectedButSmResumptionPossible());
-                //connection.disconnect(unavailablePresence);
+                connection.disconnect(unavailablePresence);
             } catch (Exception e)
             {}
 
@@ -1449,6 +1447,23 @@ public class ProtocolProviderServiceJabberImpl
                     discoveryManager = null;
                 }
             }
+        }
+    }
+
+    /**
+     * Used to interrupt the current connection.
+     */
+    public void interruptConnection()
+    {
+        if(connection != null && connection instanceof XMPPTCPConnection)
+        {
+            try
+            {
+                ((XMPPTCPConnection)connection).instantShutdown();
+                System.out.println("IS DISCONNECTED BUT RESUMPTION POSSIBLE: "+((XMPPTCPConnection)connection).isDisconnectedButSmResumptionPossible());
+            }
+            catch (Exception e)
+            {}
         }
     }
 

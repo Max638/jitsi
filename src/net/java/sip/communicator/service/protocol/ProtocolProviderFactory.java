@@ -1007,30 +1007,29 @@ public abstract class ProtocolProviderFactory
             = accountID.getAccountPropertyString(
                     ProtocolProviderFactory.USER_ID);
 
-        ProtocolProviderService service = createService(userID, accountID);
+        if(getProviderForAccount(accountID) == null) {
+            ProtocolProviderService service = createService(userID, accountID);
 
-        Dictionary<String, String> properties = new Hashtable<String, String>();
-        properties.put(PROTOCOL, protocolName);
-        properties.put(USER_ID, userID);
+            Dictionary<String, String> properties = new Hashtable<String, String>();
+            properties.put(PROTOCOL, protocolName);
+            properties.put(USER_ID, userID);
 
-        ServiceRegistration<ProtocolProviderService> serviceRegistration
-            = bundleContext.registerService(
+            ServiceRegistration<ProtocolProviderService> serviceRegistration
+                    = bundleContext.registerService(
                     ProtocolProviderService.class,
                     service,
                     properties);
 
-        if (serviceRegistration == null)
-        {
-            return false;
-        }
-        else
-        {
-            synchronized (registeredAccounts)
-            {
-                registeredAccounts.put(accountID, serviceRegistration);
+            if (serviceRegistration == null) {
+                return false;
+            } else {
+                synchronized (registeredAccounts) {
+                    registeredAccounts.put(accountID, serviceRegistration);
+                }
+                return true;
             }
-            return true;
         }
+        return true;
     }
 
     /**

@@ -19,6 +19,7 @@ package net.java.sip.communicator.plugin.reconnectplugin;
 
 import java.util.*;
 
+import net.java.sip.communicator.impl.protocol.jabber.ProtocolProviderServiceJabberImpl;
 import net.java.sip.communicator.service.gui.*;
 import net.java.sip.communicator.service.netaddr.*;
 import net.java.sip.communicator.service.netaddr.event.*;
@@ -637,6 +638,14 @@ public class ReconnectPluginActivator
         }).start();
     }
 
+    private void interruptConnection(ProtocolProviderService protocolProviderService)
+    {
+        if(protocolProviderService instanceof ProtocolProviderServiceJabberImpl){
+            ((ProtocolProviderServiceJabberImpl)protocolProviderService).interruptConnection();
+        }
+
+    }
+
     /**
      * Trace prints of current status of the lists with protocol providers,
      * that are currently in interest of the reconnect plugin.
@@ -932,7 +941,8 @@ public class ReconnectPluginActivator
         pp.addRegistrationStateChangeListener(listener);
 
         // as we will reconnect, lets unregister
-        unregister(pp, true, listener, task);
+        //unregister(pp, true, listener, task);
+        interruptConnection(pp);
     }
 
     /**
