@@ -3086,6 +3086,7 @@ public class ProtocolProviderServiceJabberImpl
         if(connection instanceof XMPPTCPConnection) {
             ((XMPPTCPConnection) connection).setUseStreamManagement(true);
             ((XMPPTCPConnection) connection).setUseStreamManagementResumption(true);
+            ((XMPPTCPConnection) connection).setPreferredResumptionTime(60);
         }
     }
 
