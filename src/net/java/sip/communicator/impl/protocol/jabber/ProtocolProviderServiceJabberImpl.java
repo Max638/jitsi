@@ -41,12 +41,10 @@ import net.java.sip.communicator.impl.protocol.jabber.extensions.thumbnail.*;
 import net.java.sip.communicator.service.certificate.*;
 import net.java.sip.communicator.service.dns.*;
 import net.java.sip.communicator.service.protocol.*;
-import net.java.sip.communicator.service.protocol.ProxyInfo;
 import net.java.sip.communicator.service.protocol.event.*;
 import net.java.sip.communicator.service.protocol.jabber.*;
 import net.java.sip.communicator.service.protocol.jabberconstants.*;
 import net.java.sip.communicator.util.*;
-import net.java.sip.communicator.util.Logger;
 
 import org.jitsi.service.configuration.*;
 import org.jitsi.service.neomedia.*;
@@ -385,6 +383,8 @@ public class ProtocolProviderServiceJabberImpl
      * its password.
      */
     private UserCredentials userCredentials = null;
+
+    private XMPPTCPConnection oldConnection;
 
     /**
      * An <tt>OperationSet</tt> that allows access to connection information used
@@ -1109,6 +1109,7 @@ public class ProtocolProviderServiceJabberImpl
             JabberLoginStrategy loginStrategy)
         throws XMPPException, InterruptedException, IOException, SmackException
     {
+        boolean succesfullyResumed = false;
         // BOSH or TCP ?
         ConnectionConfiguration.Builder confConn =
             loginStrategy.getConnectionConfigurationBuilder();
@@ -1142,196 +1143,213 @@ public class ProtocolProviderServiceJabberImpl
 
         TLSUtils.setTLSOnly(confConn);
 
-        if(connection != null)
-        {
-            logger.error("Connection is not null and isConnected:"
-                + connection.isConnected(),
-                new Exception("Trace possible duplicate connections: " +
-                    getAccountID().getAccountAddress()));
-            disconnectAndCleanConnection();
+        //Attempt to resume an old connection
+        if(oldConnection != null) {
+            System.out.println("Attempting Resumption");
+            while(oldConnection.isSmResumptionPossible()) {
+                if(oldConnection.streamWasResumed()) {
+                    succesfullyResumed = true;
+                    connection = oldConnection;
+                }
+            }
+            oldConnection = null;
         }
-
-        if (isBosh)
-        {
-            connection =
-                new XMPPBOSHConnection((BOSHConfiguration) confConn.build());
+        
+        if (!succesfullyResumed) {
+            if(connection != null)
+            {
+                logger.error("Connection is not null and isConnected:"
+                    + connection.isConnected(),
+                    new Exception("Trace possible duplicate connections: " +
+                        getAccountID().getAccountAddress()));
+                disconnectAndCleanConnection();
+            }
+    
+            if (isBosh)
+            {
+                connection =
+                    new XMPPBOSHConnection((BOSHConfiguration) confConn.build());
+            }
+            else
+            {
+                connection =
+                    new XMPPTCPConnection(
+                        (XMPPTCPConnectionConfiguration) confConn.build());
+            }
+    
+            enableStreamManagementAndResumptionIfPossible();
         }
-        else
-        {
-            connection =
-                new XMPPTCPConnection(
-                    (XMPPTCPConnectionConfiguration) confConn.build());
-        }
-
-        enableStreamManagementAndResumptionIfPossible();
 
         ReconnectionManager.getInstanceFor(connection).disableAutomaticReconnection();
 
         System.out.println("IS ENABLED autoreconect"+ReconnectionManager.getInstanceFor(connection).isAutomaticReconnectEnabled());
         this.address = address;
-
-        try
-        {
-            CertificateService cvs =
-                getCertificateVerificationService();
-            if(cvs != null)
+        
+        if(!succesfullyResumed) {
+            try
             {
-                SSLContext sslContext = loginStrategy.createSslContext(cvs,
-                        getTrustManager(cvs, serviceName.toString()));
-
-                // log SSL/TLS algorithms and protocols
-                if (logger.isDebugEnabled())
+                CertificateService cvs =
+                    getCertificateVerificationService();
+                if(cvs != null)
                 {
-                    final StringBuilder buff = new StringBuilder();
-                    buff.append("Available TLS protocols and algorithms:\n");
-                    buff.append("Default protocols: ");
-                    buff.append(Arrays.toString(
-                        sslContext.getDefaultSSLParameters().getProtocols()));
-                    buff.append("\n");
-                    buff.append("Supported protocols: ");
-                    buff.append(Arrays.toString(
-                        sslContext.getSupportedSSLParameters().getProtocols()));
-                    buff.append("\n");
-                    buff.append("Default cipher suites: ");
-                    buff.append(Arrays.toString(
-                            sslContext.getDefaultSSLParameters()
-                            .getCipherSuites()));
-                    buff.append("\n");
-                    buff.append("Supported cipher suites: ");
-                    buff.append(Arrays.toString(
-                            sslContext.getSupportedSSLParameters()
-                            .getCipherSuites()));
-                    logger.debug(buff.toString());
+                    SSLContext sslContext = loginStrategy.createSslContext(cvs,
+                            getTrustManager(cvs, serviceName.toString()));
+    
+                    // log SSL/TLS algorithms and protocols
+                    if (logger.isDebugEnabled())
+                    {
+                        final StringBuilder buff = new StringBuilder();
+                        buff.append("Available TLS protocols and algorithms:\n");
+                        buff.append("Default protocols: ");
+                        buff.append(Arrays.toString(
+                            sslContext.getDefaultSSLParameters().getProtocols()));
+                        buff.append("\n");
+                        buff.append("Supported protocols: ");
+                        buff.append(Arrays.toString(
+                            sslContext.getSupportedSSLParameters().getProtocols()));
+                        buff.append("\n");
+                        buff.append("Default cipher suites: ");
+                        buff.append(Arrays.toString(
+                                sslContext.getDefaultSSLParameters()
+                                .getCipherSuites()));
+                        buff.append("\n");
+                        buff.append("Supported cipher suites: ");
+                        buff.append(Arrays.toString(
+                                sslContext.getSupportedSSLParameters()
+                                .getCipherSuites()));
+                        logger.debug(buff.toString());
+                    }
+    
+                    confConn.setCustomSSLContext(sslContext);
                 }
-
-                confConn.setCustomSSLContext(sslContext);
+                else if (loginStrategy.isTlsRequired())
+                    throw new JitsiXmppException(
+                        "Certificate verification service is "
+                        + "unavailable and TLS is required");
             }
-            else if (loginStrategy.isTlsRequired())
-                throw new JitsiXmppException(
-                    "Certificate verification service is "
-                    + "unavailable and TLS is required");
-        }
-        catch(GeneralSecurityException e)
-        {
-            logger.error("Error creating custom trust manager", e);
-            throw new JitsiXmppException("Error creating custom trust manager", e);
-        }
-
-        createConnectionStanzaBuffer(isBosh);
-
-        if(debugger == null)
-        {
-            // FIXME Smack4.2: implement the smack debugger interface, 
-            // the StanzaListener won't catch IQs anymore
-            debugger = new SmackPacketDebugger();
-
-            // sets the debugger
-            debugger.setConnection(connection);
-            connection.addAsyncStanzaListener(debugger.inbound, null);
-            connection.addPacketInterceptor(debugger.outbound, null);
-        }
-
-        connection.connect();
-
-        setTrafficClass();
-
-        if(abortConnecting)
-        {
-            abortConnecting = false;
-            disconnectAndCleanConnection();
-
-            return ConnectState.ABORT_CONNECTING;
-        }
-
-        registerServiceDiscoveryManager();
-
-        if(connectionListener == null)
-        {
-            connectionListener = new JabberConnectionListener();
-        }
-
-        if(!connection.isSecureConnection() && loginStrategy.isTlsRequired())
-        {
-            throw new JitsiXmppException("TLS is required by client");
-        }
-
-        if(!connection.isConnected())
-        {
-            // connection is not connected, lets set state to our connection
-            // as failed seems there is some lag/problem with network
-            // and this way we will inform for it and later reconnect if needed
-            // as IllegalStateException that is thrown within
-            // addConnectionListener is not handled properly
-            disconnectAndCleanConnection();
-
-            logger.error("Connection not established, server not found!");
-
-            eventDuringLogin = null;
-
-            fireRegistrationStateChanged(getRegistrationState(),
-                RegistrationState.CONNECTION_FAILED,
-                RegistrationStateChangeEvent.REASON_SERVER_NOT_FOUND, null);
-
-            return ConnectState.ABORT_CONNECTING;
-        }
-        else
-        {
-            connection.addConnectionListener(connectionListener);
-        }
-
-        if(abortConnecting)
-        {
-            abortConnecting = false;
-            disconnectAndCleanConnection();
-
-            return ConnectState.ABORT_CONNECTING;
-        }
-
-        fireRegistrationStateChanged(
-                getRegistrationState()
-                , RegistrationState.REGISTERING
-                , RegistrationStateChangeEvent.REASON_NOT_SPECIFIED
-                , null);
-
-        if (!loginStrategy.login(connection, jid))
-        {
-            disconnectAndCleanConnection();
-            eventDuringLogin = null;
+            catch(GeneralSecurityException e)
+            {
+                logger.error("Error creating custom trust manager", e);
+                throw new JitsiXmppException("Error creating custom trust manager", e);
+            }
+        
+            createConnectionStanzaBuffer(isBosh);
+    
+            if(debugger == null)
+            {
+                // FIXME Smack4.2: implement the smack debugger interface, 
+                // the StanzaListener won't catch IQs anymore
+                debugger = new SmackPacketDebugger();
+    
+                // sets the debugger
+                debugger.setConnection(connection);
+                connection.addAsyncStanzaListener(debugger.inbound, null);
+                connection.addPacketInterceptor(debugger.outbound, null);
+            }
+    
+            connection.connect();
+    
+            setTrafficClass();
+    
+            if(abortConnecting)
+            {
+                abortConnecting = false;
+                disconnectAndCleanConnection();
+    
+                return ConnectState.ABORT_CONNECTING;
+            }
+    
+            registerServiceDiscoveryManager();
+    
+            if(connectionListener == null)
+            {
+                connectionListener = new JabberConnectionListener();
+            }
+    
+            if(!connection.isSecureConnection() && loginStrategy.isTlsRequired())
+            {
+                throw new JitsiXmppException("TLS is required by client");
+            }
+    
+            if(!connection.isConnected())
+            {
+                // connection is not connected, lets set state to our connection
+                // as failed seems there is some lag/problem with network
+                // and this way we will inform for it and later reconnect if needed
+                // as IllegalStateException that is thrown within
+                // addConnectionListener is not handled properly
+                disconnectAndCleanConnection();
+    
+                logger.error("Connection not established, server not found!");
+    
+                eventDuringLogin = null;
+    
+                fireRegistrationStateChanged(getRegistrationState(),
+                    RegistrationState.CONNECTION_FAILED,
+                    RegistrationStateChangeEvent.REASON_SERVER_NOT_FOUND, null);
+    
+                return ConnectState.ABORT_CONNECTING;
+            }
+            else
+            {
+                connection.addConnectionListener(connectionListener);
+            }
+    
+            if(abortConnecting)
+            {
+                abortConnecting = false;
+                disconnectAndCleanConnection();
+    
+                return ConnectState.ABORT_CONNECTING;
+            }
+    
             fireRegistrationStateChanged(
-                getRegistrationState(),
-                // not auth failed, or there would be no info-popup
-                RegistrationState.CONNECTION_FAILED,
-                RegistrationStateChangeEvent.REASON_AUTHENTICATION_FAILED,
-                loginStrategy.getClass().getName() + " requests abort");
-
-            return ConnectState.ABORT_CONNECTING;
+                    getRegistrationState()
+                    , RegistrationState.REGISTERING
+                    , RegistrationStateChangeEvent.REASON_NOT_SPECIFIED
+                    , null);
+    
+            if (!loginStrategy.login(connection, jid))
+            {
+                disconnectAndCleanConnection();
+                eventDuringLogin = null;
+                fireRegistrationStateChanged(
+                    getRegistrationState(),
+                    // not auth failed, or there would be no info-popup
+                    RegistrationState.CONNECTION_FAILED,
+                    RegistrationStateChangeEvent.REASON_AUTHENTICATION_FAILED,
+                    loginStrategy.getClass().getName() + " requests abort");
+    
+                return ConnectState.ABORT_CONNECTING;
+            }
+    
+            if(connection.isAuthenticated())
+            {
+                eventDuringLogin = null;
+    
+                fireRegistrationStateChanged(
+                    getRegistrationState(),
+                    RegistrationState.REGISTERED,
+                    RegistrationStateChangeEvent.REASON_NOT_SPECIFIED, null);
+    
+                return ConnectState.STOP_TRYING;
+            }
+            else
+            {
+                disconnectAndCleanConnection();
+    
+                eventDuringLogin = null;
+    
+                fireRegistrationStateChanged(
+                    getRegistrationState()
+                    , RegistrationState.UNREGISTERED
+                    , RegistrationStateChangeEvent.REASON_NOT_SPECIFIED
+                    , null);
+    
+                return ConnectState.CONTINUE_TRYING;
+            }
         }
-
-        if(connection.isAuthenticated())
-        {
-            eventDuringLogin = null;
-
-            fireRegistrationStateChanged(
-                getRegistrationState(),
-                RegistrationState.REGISTERED,
-                RegistrationStateChangeEvent.REASON_NOT_SPECIFIED, null);
-
-            return ConnectState.STOP_TRYING;
-        }
-        else
-        {
-            disconnectAndCleanConnection();
-
-            eventDuringLogin = null;
-
-            fireRegistrationStateChanged(
-                getRegistrationState()
-                , RegistrationState.UNREGISTERED
-                , RegistrationStateChangeEvent.REASON_NOT_SPECIFIED
-                , null);
-
-            return ConnectState.CONTINUE_TRYING;
-        }
+        return ConnectState.STOP_TRYING;
     }
 
     /**
@@ -1419,14 +1437,21 @@ public class ProtocolProviderServiceJabberImpl
                     unavailablePresence.setStatus(
                         opSet.getCurrentStatusMessage());
                 }
+                
+                if(connection != null && connection instanceof XMPPTCPConnection)
+                {
+                    ((XMPPTCPConnection)connection).instantShutdown();
+                    System.out.println("IS DISCONNECTED BUT RESUMPTION POSSIBLE: "+((XMPPTCPConnection)connection).isDisconnectedButSmResumptionPossible());
+                } else {
 
-                ((XMPPTCPConnection)connection).instantShutdown();
-                System.out.println("IS DISCONNECTED BUT RESUMPTION POSSIBLE: "+((XMPPTCPConnection)connection).isDisconnectedButSmResumptionPossible());
-                //connection.disconnect(unavailablePresence);
+                    connection.disconnect(unavailablePresence);
+                }
             } catch (Exception e)
             {}
 
             connectionListener = null;
+            if (connection instanceof XMPPTCPConnection)
+                oldConnection = (XMPPTCPConnection) connection;
             connection = null;
             // make it null as it also holds a reference to the old connection
             // will be created again on new connection
@@ -1449,6 +1474,23 @@ public class ProtocolProviderServiceJabberImpl
                     discoveryManager = null;
                 }
             }
+        }
+    }
+
+    /**
+     * Used to interrupt the current connection.
+     */
+    public void interruptConnection()
+    {
+        if(connection != null && connection instanceof XMPPTCPConnection)
+        {
+            try
+            {
+                ((XMPPTCPConnection)connection).instantShutdown();
+                System.out.println("IS DISCONNECTED BUT RESUMPTION POSSIBLE: "+((XMPPTCPConnection)connection).isDisconnectedButSmResumptionPossible());
+            }
+            catch (Exception e)
+            {}
         }
     }
 
