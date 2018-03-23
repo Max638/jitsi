@@ -1144,18 +1144,27 @@ public class ProtocolProviderServiceJabberImpl
         TLSUtils.setTLSOnly(confConn);
 
         //Attempt to resume an old connection
+        logger.info("Hello old Connection");
         if(oldConnection != null) {
+            logger.warn("Try to resume Stream");
             System.out.println("Attempting Resumption");
+            oldConnection.connect();
             while(oldConnection.isSmResumptionPossible()) {
+                oldConnection.login();
                 if(oldConnection.streamWasResumed()) {
                     succesfullyResumed = true;
                     connection = oldConnection;
+                    break;
                 } else {
                     System.out.println("Stream was not resumed");
                     Thread.sleep(1000);
                 }
             }
             oldConnection = null;
+            if (succesfullyResumed)
+                System.out.println("Stream was resumed");
+            else 
+                System.out.println("Stream resumption attemtp aborted");
         }
         
         if (!succesfullyResumed) {
@@ -1351,7 +1360,7 @@ public class ProtocolProviderServiceJabberImpl
     
                 return ConnectState.CONTINUE_TRYING;
             }
-        }
+        } 
         return ConnectState.STOP_TRYING;
     }
 
